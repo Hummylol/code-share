@@ -5,12 +5,11 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { Copy, Trash, ArrowLeft } from "lucide-react";
+import { Copy, Trash } from "lucide-react";
+import { toast } from "sonner"; // ✅ Import Sonner toast
 
 export default function CodeList() {
-  const [codes, setCodes] = useState<
-    { id: string; title: string; code: string; created_at: string }[]
-  >([]);
+  const [codes, setCodes] = useState([]);
   const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
   const router = useRouter();
 
@@ -26,11 +25,20 @@ export default function CodeList() {
   const handleDelete = async (id: string) => {
     await supabase.from("codes").delete().match({ id });
     fetchCodes();
+    
+    // ✅ Sonner toast for delete
+    toast.error("Code Deleted", {
+      description: "The code snippet has been removed.",
+    });
   };
 
   const handleCopy = (code: string) => {
     navigator.clipboard.writeText(code);
-    alert("Copied to clipboard!");
+    
+    // ✅ Sonner toast for copy
+    toast.success("Copied to Clipboard", {
+      description: "The code snippet has been copied successfully.",
+    });
   };
 
   const toggleReadMore = (id: string) => {
@@ -38,9 +46,8 @@ export default function CodeList() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center p-6 bg-white text-black dark:bg-black dark:text-white transition-colors">
-      <Button onClick={() => router.push("/")} variant="outline" className="absolute top-4 left-4">
-        <ArrowLeft className="mr-2" size={18} />
+    <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white flex flex-col items-center p-6 transition-colors">
+      <Button onClick={() => router.push("/")} className="absolute top-4 left-4">
         Back
       </Button>
 
@@ -58,10 +65,10 @@ export default function CodeList() {
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-gray-200 p-6 mb-4 rounded-lg shadow-lg dark:bg-[#0e0e0e] transition-colors"
+              className="bg-gray-200 p-4 mb-4 rounded-lg shadow-lg dark:bg-[#0e0e0e] transition-colors"
             >
               <h3 className="text-xl mb-2">{item.title}</h3>
-              <pre className="bg-gray-100 p-3 rounded transition-all overflow-hidden dark:bg-[#1a1a1a]">
+              <pre className="bg-gray-100 p-2 rounded dark:bg-[#222222] transition-all overflow-hidden">
                 {expanded[item.id] ? item.code : previewCode}
               </pre>
 

@@ -8,12 +8,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowLeft, Sun, Moon } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
+import { toast } from "sonner"; // ✅ Import Sonner toast
 
 export default function Home() {
   const [title, setTitle] = useState("");
   const [code, setCode] = useState("");
-  const [isDark, setIsDark] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async () => {
@@ -25,19 +25,16 @@ export default function Home() {
       setTitle("");
       setCode("");
       router.push("/codes");
+      
+      // ✅ Sonner toast for success
+      toast.success("Code Saved", {
+        description: "Your code snippet has been added.",
+      });
     }
-  };
-
-  // Toggle Dark Mode
-  const toggleTheme = () => {
-    document.documentElement.classList.toggle("dark");
-    setIsDark(!isDark);
   };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-white text-black dark:bg-black dark:text-white transition-colors">
-      
-
       <Link href="/codes">
         <Button variant="outline" className="absolute top-4 left-4">
           <ArrowLeft className="mr-2" size={18} />
